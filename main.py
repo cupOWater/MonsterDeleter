@@ -32,7 +32,7 @@ def register_context_menu():
             
         key_path = r"Software\Classes\*\shell\SummonMonster"
         key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, key_path)
-        winreg.SetValue(key, "", winreg.REG_SZ, "召唤大将怪兽摧毁")
+        winreg.SetValue(key, "", winreg.REG_SZ, "Summon Monster to Destroyy it")
         winreg.SetValueEx(key, "Icon", 0, winreg.REG_SZ, icon_str)
         winreg.CloseKey(key)
         
@@ -151,7 +151,7 @@ class BubbleWidget(QWidget):
             QLabel {
                 color: #1c1c1e; 
                 padding: 15px 30px; 
-                font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; 
+                font-family: 'Segoe UI', 'Comic Sans MS', sans-serif; 
                 font-size: 20px; 
                 font-weight: 600;
             }
@@ -199,8 +199,8 @@ class ChoicesWidget(QWidget):
         layout = QHBoxLayout()
         layout.setSpacing(15)
         
-        self.btn1 = QPushButton("是的")
-        self.btn2 = QPushButton("嘤嘤嘤就是这个")
+        self.btn1 = QPushButton("Yeah!")
+        self.btn2 = QPushButton("*Sob* This is the one!")
         
         # Modern Sleek UI Design
         btn_style = """
@@ -272,7 +272,7 @@ class MonsterDeleter(QWidget):
         self.explosion_animator = SpriteAnimator(self)
         self.explosion_animator.hide()
         
-        self.bubble = BubbleWidget("喂，是这个吗？")
+        self.bubble = BubbleWidget("Oi, this the one?")
         self.choices = ChoicesWidget()
         
         self.init_audio()
@@ -294,7 +294,7 @@ class MonsterDeleter(QWidget):
         self.bgm_player = QMediaPlayer()
         self.bgm_audio = QAudioOutput()
         self.bgm_player.setAudioOutput(self.bgm_audio)
-        bgm_path = get_resource_path(r"assets\音频\bgm(1).mp3")
+        bgm_path = get_resource_path(r"assets\audio\bgm(1).mp3")
         self.bgm_player.setSource(QUrl.fromLocalFile(bgm_path))
         self.bgm_audio.setVolume(0.5)
         self.bgm_player.mediaStatusChanged.connect(self.loop_bgm)
@@ -303,7 +303,7 @@ class MonsterDeleter(QWidget):
         self.sfx_player = QMediaPlayer()
         self.sfx_audio = QAudioOutput()
         self.sfx_player.setAudioOutput(self.sfx_audio)
-        sfx_path = get_resource_path(r"assets\音频\怪兽说话.mp3")
+        sfx_path = get_resource_path(r"assets\audio\monsterTalk.mp3")
         self.sfx_player.setSource(QUrl.fromLocalFile(sfx_path))
         self.sfx_audio.setVolume(1.0)
         
@@ -311,7 +311,7 @@ class MonsterDeleter(QWidget):
         self.exp_player = QMediaPlayer()
         self.exp_audio = QAudioOutput()
         self.exp_player.setAudioOutput(self.exp_audio)
-        exp_path = get_resource_path(r"assets\音频\爆炸.MP4")
+        exp_path = get_resource_path(r"assets\audio\explode.MP4")
         self.exp_player.setSource(QUrl.fromLocalFile(exp_path))
         self.exp_audio.setVolume(0.3)
 
@@ -362,7 +362,7 @@ class MonsterDeleter(QWidget):
             # Draw semi-transparent background image
             bg_image_path = ""
             for ext in [".png", ".jpg", ".jpeg"]:
-                test_path = get_resource_path(rf"assets\选择界面\选择界面{ext}")
+                test_path = get_resource_path(rf"assets\selectScreen\selectScreen{ext}")
                 if os.path.exists(test_path):
                     bg_image_path = test_path
                     break
@@ -387,7 +387,7 @@ class MonsterDeleter(QWidget):
             font.setPointSize(30)
             font.setBold(True)
             painter.setFont(font)
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "请选择你要摧毁的文件")
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Select your target!")
 
     def mousePressEvent(self, event):
         if not self.monster_sequence_started and event.button() == Qt.MouseButton.LeftButton:
@@ -410,7 +410,7 @@ class MonsterDeleter(QWidget):
         # Start playing BGM here
         self.bgm_player.play()
         
-        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "走路动效_spritesheet.png"))
+        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "walking_spritesheet.png"))
         
         screen = QApplication.primaryScreen().geometry()
         start_x = -self.animator.width()
@@ -440,7 +440,7 @@ class MonsterDeleter(QWidget):
         self.sfx_player.play()
         
         # Phase 2: Pointing (Play ONCE, frames 11-14 only)
-        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "指着文件_spritesheet.png"), frame_indices=[11, 12, 13, 14])
+        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "pointing_spritesheet.png"), frame_indices=[11, 12, 13, 14])
         
         try:
             self.animator.animationFinished.disconnect()
@@ -484,7 +484,7 @@ class MonsterDeleter(QWidget):
         except TypeError:
             pass
             
-        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "踹文件动效_spritesheet.png"))
+        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "kicking_spritesheet.png"))
         self.animator.animationFinished.connect(self.on_kick_finished)
         self.animator.frameChanged.connect(self.on_kick_frame)
         self.animator.play(fps=8, loop=False)
@@ -499,7 +499,7 @@ class MonsterDeleter(QWidget):
         self.exp_player.play()
         
         # Slightly larger explosion (150 instead of 100)
-        self.explosion_animator.load_spritesheet(os.path.join(SPRITE_DIR, "爆炸_spritesheet.png"), target_height=150)
+        self.explosion_animator.load_spritesheet(os.path.join(SPRITE_DIR, "explode_spritesheet.png"), target_height=150)
         
         # Center explosion slightly higher to cover the file icon properly
         exp_x = self.target_pos.x() - self.explosion_animator.width() // 2
@@ -537,7 +537,7 @@ class MonsterDeleter(QWidget):
         self.start_phase4_leo()
 
     def start_phase4_leo(self):
-        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "雷欧登场_spritesheet.png"))
+        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "leoEntrance_spritesheet.png"))
         self.animator.animationFinished.connect(self.start_phase5_fly)
         self.animator.play(fps=8, loop=False)
 
@@ -547,7 +547,7 @@ class MonsterDeleter(QWidget):
         except TypeError:
             pass
             
-        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "出场飞行动效_spritesheet.png"))
+        self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "flyAway_spritesheet.png"))
         self.animator.play(fps=8, loop=True)
         
         screen = QApplication.primaryScreen().geometry()

@@ -21,7 +21,7 @@ def add_context_menu():
         
         # Create key
         key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, key_path)
-        winreg.SetValue(key, "", winreg.REG_SZ, "召唤大将怪兽摧毁")
+        winreg.SetValue(key, "", winreg.REG_SZ, "Summon Monster to Destroyy it")
         # Add an icon if possible (using shell32.dll trash icon)
         winreg.SetValueEx(key, "Icon", 0, winreg.REG_SZ, "shell32.dll,32")
         winreg.CloseKey(key)
