@@ -263,8 +263,9 @@ class MonsterDeleter(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        screen = QApplication.primaryScreen().geometry()
-        self.setGeometry(screen)
+        screen = QApplication.screenAt(QCursor.pos()) or QApplication.primaryScreen()
+        self.setScreen(screen)
+        self.setGeometry(screen.geometry())
         
         self.animator = SpriteAnimator(self)
         self.animator.hide()
@@ -411,8 +412,7 @@ class MonsterDeleter(QWidget):
         self.bgm_player.play()
         
         self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "walking_spritesheet.png"))
-        
-        screen = QApplication.primaryScreen().geometry()
+
         start_x = -self.animator.width()
         start_y = self.target_pos.y() - self.animator.height() // 2 + 50 # Move pet down
         
@@ -550,18 +550,22 @@ class MonsterDeleter(QWidget):
         self.animator.load_spritesheet(os.path.join(SPRITE_DIR, "flyAway_spritesheet.png"))
         self.animator.play(fps=8, loop=True)
         
-        screen = QApplication.primaryScreen().geometry()
         self.move_anim2 = QPropertyAnimation(self.animator, b"pos")
         self.move_anim2.setDuration(2000)
         self.move_anim2.setStartValue(self.animator.pos())
-        
-        end_x = screen.width() + 200
+
+        end_x = self.screen().geometry().width() + 200
         end_y = self.animator.pos().y()
             
         self.move_anim2.setEndValue(QPoint(end_x, end_y))
         self.move_anim2.setEasingCurve(QEasingCurve.Type.InQuad)
         self.move_anim2.finished.connect(self.on_app_exit)
         self.move_anim2.start()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Escape:
+            self.on_app_exit()
+        super().keyPressEvent(event)
 
     def on_app_exit(self):
         # Explicitly stop multimedia to free resources and stop background audio
